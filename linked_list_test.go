@@ -1,13 +1,14 @@
-package golist
+package golist_test
 
 import (
 	"sort"
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"github.com/treaster/golist"
 )
 
-func verifyIntOrder(t *testing.T, ll *LinkedList[int], expectedOrder []int) {
+func verifyIntOrder(t *testing.T, ll *golist.LinkedList[int], expectedOrder []int) {
 	require.Equal(t, len(expectedOrder), ll.Length())
 
 	{
@@ -30,7 +31,7 @@ func verifyIntOrder(t *testing.T, ll *LinkedList[int], expectedOrder []int) {
 }
 
 func TestLinkedList(t *testing.T) {
-	ll := NewLinkedList[int]()
+	ll := golist.NewLinkedList[int]()
 	verifyIntOrder(t, ll, []int{})
 
 	ll.Append(1)
