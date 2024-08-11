@@ -1,6 +1,6 @@
-module github.com/treaster/golist
+module github.com/treaster/gotl
 
-go 1.18
+go 1.21
 
 require github.com/stretchr/testify v1.7.1
 

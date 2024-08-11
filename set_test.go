@@ -1,14 +1,14 @@
-package golist_test
+package gotl_test
 
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/treaster/golist"
+	"github.com/treaster/gotl"
 )
 
 func TestSet(t *testing.T) {
-	s := golist.NewSet[int]()
+	s := gotl.NewSet[int]()
 	require.Equal(t, 0, s.Len())
 	require.False(t, s.Has(5))
 

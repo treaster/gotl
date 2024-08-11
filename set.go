@@ -1,4 +1,4 @@
-package golist
+package gotl
 
 type Set[T comparable] struct {
 	impl map[T]struct{}

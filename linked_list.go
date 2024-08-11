@@ -1,4 +1,4 @@
-package golist
+package gotl
 
 import (
 	"fmt"
