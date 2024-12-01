@@ -8,7 +8,7 @@ import (
 	"github.com/treaster/gotl"
 )
 
-func verifyIntOrder(t *testing.T, ll *gotl.LinkedList[int], expectedOrder []int) {
+func verifyIntOrder(t *testing.T, ll gotl.LinkedList[int], expectedOrder []int) {
 	require.Equal(t, len(expectedOrder), ll.Length())
 
 	{
