@@ -1,7 +1,7 @@
 package gotl_test
 
 import (
-	"sort"
+	"slices"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -12,21 +12,21 @@ func verifyIntOrder(t *testing.T, ll gotl.LinkedList[int], expectedOrder []int) 
 	require.Equal(t, len(expectedOrder), ll.Length())
 
 	{
-		var foundOrder []int
+		foundOrder := []int{}
 		for item := ll.First(); item != nil; item = item.Next() {
 			foundOrder = append(foundOrder, item.Value)
 		}
-		require.ElementsMatch(t, expectedOrder, foundOrder)
+		require.Equal(t, expectedOrder, foundOrder)
 	}
 
 	{
-		var foundOrder []int
+		foundOrder := []int{}
 		for item := ll.Last(); item != nil; item = item.Prev() {
 			foundOrder = append(foundOrder, item.Value)
 		}
-		sort.Reverse(sort.IntSlice(expectedOrder))
-		require.ElementsMatch(t, expectedOrder, foundOrder)
-		sort.Reverse(sort.IntSlice(expectedOrder))
+		slices.Reverse(expectedOrder)
+		require.Equal(t, expectedOrder, foundOrder)
+		slices.Reverse(expectedOrder)
 	}
 }
 
@@ -62,4 +62,20 @@ func TestLinkedList(t *testing.T) {
 	item = ll.Last()
 	ll.Remove(item)
 	verifyIntOrder(t, ll, []int{})
+}
+
+func TestLinkedList_StaleItems(t *testing.T) {
+	ll := gotl.NewLinkedList[int]()
+	ll.Append(1)
+	ll.Append(2)
+	ll.Append(3)
+	ll.Append(4)
+
+	verifyIntOrder(t, ll, []int{1, 2, 3, 4})
+	oldFirst := ll.First()
+	ll.Remove(ll.First())
+	ll.Remove(ll.First())
+	require.Equal(t, 3, ll.First().Value)
+	require.Panics(t, func() { _ = oldFirst.Prev() })
+	require.Panics(t, func() { _ = oldFirst.Next() })
 }

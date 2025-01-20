@@ -12,13 +12,21 @@ type ListElement[T any] struct {
 
 	prev *ListElement[T]
 	next *ListElement[T]
+
+	removed bool
 }
 
 func (le ListElement[T]) Prev() *ListElement[T] {
+	if le.removed {
+		panic("Calling Prev() on a removed LinkedList element is undefined and unsupported.")
+	}
 	return le.prev
 }
 
 func (le ListElement[T]) Next() *ListElement[T] {
+	if le.removed {
+		panic("Calling Next() on a removed LinkedList element is undefined and unsupported.")
+	}
 	return le.next
 }
 
@@ -29,7 +37,7 @@ type LinkedList[T any] interface {
 	Append(value T)
 	Prepend(value T)
 	Remove(element *ListElement[T])
-	DebugString() string
+	DebugString(bool) string
 }
 
 func NewLinkedList[T any]() LinkedList[T] {
@@ -56,9 +64,10 @@ func (ll *linkedList[T]) Length() int {
 
 func (ll *linkedList[T]) Append(value T) {
 	newItem := &ListElement[T]{
-		Value: value,
-		prev:  ll.last,
-		next:  nil,
+		Value:   value,
+		prev:    ll.last,
+		next:    nil,
+		removed: false,
 	}
 
 	if ll.last != nil {
@@ -73,9 +82,10 @@ func (ll *linkedList[T]) Append(value T) {
 
 func (ll *linkedList[T]) Prepend(value T) {
 	newItem := &ListElement[T]{
-		Value: value,
-		prev:  nil,
-		next:  ll.first,
+		Value:   value,
+		prev:    nil,
+		next:    ll.first,
+		removed: false,
 	}
 
 	if ll.first != nil {
@@ -90,33 +100,36 @@ func (ll *linkedList[T]) Prepend(value T) {
 }
 
 func (ll *linkedList[T]) Remove(element *ListElement[T]) {
-	if element.prev != nil && element.next != nil {
+	if element.prev != nil {
 		element.prev.next = element.next
+	}
+
+	if element.next != nil {
 		element.next.prev = element.prev
 	}
 
-	if element.prev == nil {
+	if element == ll.first {
 		ll.first = element.next
-
-		if ll.first != nil {
-			ll.first.prev = nil
-		}
 	}
 
-	if element.next == nil {
+	if element == ll.last {
 		ll.last = element.prev
-
-		if ll.last != nil {
-			ll.last.next = nil
-		}
 	}
+
+	element.removed = true
 	ll.length--
 }
 
-func (ll *linkedList[T]) DebugString() string {
+func (ll *linkedList[T]) DebugString(withValues bool) string {
 	parts := make([]string, 0, ll.Length())
 	for item := ll.First(); item != nil; item = item.Next() {
-		parts = append(parts, fmt.Sprintf("%p(%p, %p)", item, item.prev, item.next))
+		var part string
+		if withValues {
+			part = fmt.Sprintf("(%p, %p (%v), %p)", item.prev, item, item.Value, item.next)
+		} else {
+			part = fmt.Sprintf("(%p, %p, %p)", item.prev, item, item.next)
+		}
+		parts = append(parts, part)
 	}
 
 	return strings.Join(parts, ", ")
