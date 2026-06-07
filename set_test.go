@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+
 	"github.com/treaster/gotl"
 )
 
@@ -31,4 +32,16 @@ func TestSet(t *testing.T) {
 	require.True(t, s.Has(7))
 
 	require.Equal(t, []int{7}, s.Items())
+
+	s.AddMany([]int{11, 14, 16})
+	require.True(t, s.Has(7))
+	require.True(t, s.Has(11))
+	require.True(t, s.Has(14))
+	require.True(t, s.Has(16))
+
+	s.RemoveMany([]int{11, 14})
+	require.True(t, s.Has(7))
+	require.False(t, s.Has(11))
+	require.False(t, s.Has(14))
+	require.True(t, s.Has(16))
 }

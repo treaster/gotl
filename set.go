@@ -3,7 +3,9 @@ package gotl
 type Set[T comparable] interface {
 	Has(elem T) bool
 	Add(elem T)
+	AddMany(elems []T)
 	Remove(elem T)
+	RemoveMany(elems []T)
 	Len() int
 	Items() []T
 }
@@ -27,8 +29,20 @@ func (s *set[T]) Add(elem T) {
 	s.impl[elem] = struct{}{}
 }
 
+func (s *set[T]) AddMany(elems []T) {
+	for _, elem := range elems {
+		s.Add(elem)
+	}
+}
+
 func (s *set[T]) Remove(elem T) {
 	delete(s.impl, elem)
+}
+
+func (s *set[T]) RemoveMany(elems []T) {
+	for _, elem := range elems {
+		s.Remove(elem)
+	}
 }
 
 func (s set[T]) Len() int {
