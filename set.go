@@ -1,5 +1,10 @@
 package gotl
 
+import (
+	"maps"
+	"slices"
+)
+
 type Set[T comparable] interface {
 	Has(elem T) bool
 	Add(elem T)
@@ -50,10 +55,5 @@ func (s set[T]) Len() int {
 }
 
 func (s *set[T]) Items() []T {
-	output := make([]T, 0, len(s.impl))
-	for k, _ := range s.impl {
-		output = append(output, k)
-	}
-
-	return output
+	return slices.Collect(maps.Keys(s.impl))
 }
